@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 horas
 
     # CORS — aceita string JSON ou lista via env
-    CORS_ORIGINS: str = '["http://localhost:5173","http://127.0.0.1:5173"]'
+    CORS_ORIGINS: str = '["http://200.132.38.218:5173","http://200.132.38.218"]'
 
     model_config = SettingsConfigDict(env_file=".env")
 
