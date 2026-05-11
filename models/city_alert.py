@@ -1,14 +1,10 @@
-import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, Boolean, DateTime, Float, ForeignKey
 from sqlalchemy.dialects.mysql import CHAR
 from sqlalchemy.orm import relationship
 
 from db.database import Base
-
-
-def gen_uuid() -> str:
-    return str(uuid.uuid4())
+from core.utils import gen_uuid
 
 
 class CityAlert(Base):
@@ -22,6 +18,6 @@ class CityAlert(Base):
     longitude   = Column(Float, nullable=False)
     alert_email = Column(String(255), nullable=False)
     is_active   = Column(Boolean, default=True, nullable=False)
-    created_at  = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at  = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 
     user = relationship("User", back_populates="city_alerts")
