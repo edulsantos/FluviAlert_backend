@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     # CORS — aceita string JSON ou lista via env
     CORS_ORIGINS: str = '["http://200.132.38.218:5173","http://200.132.38.218"]'
 
+    # SMTP (Gmail)
+    SMTP_USER: str = "fluvialert@gmail.com"
+    SMTP_PASS: str = ""
+
     model_config = SettingsConfigDict(env_file=".env")
 
     @property

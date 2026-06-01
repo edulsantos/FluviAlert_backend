@@ -17,10 +17,20 @@ logger = logging.getLogger("fluvialert")
 
 Base.metadata.create_all(bind=engine)
 
+from contextlib import asynccontextmanager
+from services.scheduler import start_scheduler
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    scheduler = start_scheduler()
+    yield
+    scheduler.shutdown()
+
 app = FastAPI(
     title="FluviAlert API",
     description="API de monitoramento de enchentes no Brasil",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -39,6 +49,12 @@ app.include_router(alerts.router, prefix="/api/alerts", tags=["Alertas"])
 @app.get("/")
 def root():
     return {"message": "FluviAlert API rodando"}
+
+@app.post("/api/sync-db", tags=["Manutenção"])
+def sync_db():
+    Base.metadata.create_all(bind=engine)
+    return {"message": "Tabelas sincronizadas no banco de dados."}
+
 
 
 if __name__ == "__main__":

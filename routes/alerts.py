@@ -10,6 +10,15 @@ from services import alert_service
 router = APIRouter()
 
 
+@router.post("/check-risks", tags=["Manutenção"])
+async def trigger_check_risks():
+    """Dispara manualmente a verificação de riscos de todas as cidades cadastradas.
+    Útil para testes e validação do envio de e-mails."""
+    from services.scheduler import async_check_city_risks
+    await async_check_city_risks()
+    return {"message": "Verificação de riscos concluída. Consulte os logs para detalhes."}
+
+
 @router.post("/{user_id}", response_model=AlertResponse, status_code=201)
 async def create_alert(user_id: str, data: AlertCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     if user_id != str(current_user.id):

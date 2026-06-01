@@ -6,13 +6,31 @@ from schemas.alert import AlertCreate, AlertUpdate
 from services.flood_service import get_city_coordinates
 
 
+from models.aut_city import AutCity
+
 async def create_alert(db: Session, user_id: str, data: AlertCreate) -> CityAlert:
     city = await get_city_coordinates(data.city_name)
     if not city:
         raise HTTPException(status_code=404, detail="Cidade não encontrada.")
 
+    # Find or create AutCity
+    aut_city = db.query(AutCity).filter(AutCity.city_name == city["city_name"]).first()
+    if not aut_city:
+        aut_city = AutCity(
+            city_name=city["city_name"],
+            state_code=city["state_code"],
+            latitude=city["latitude"],
+            longitude=city["longitude"],
+            current_status="Monitoramento Iniciado",
+            risk_level="baixo"
+        )
+        db.add(aut_city)
+        db.commit()
+        db.refresh(aut_city)
+
     alert = CityAlert(
         user_id=user_id,
+        aut_city_id=aut_city.id,
         city_name=city["city_name"],
         state_code=city["state_code"],
         latitude=city["latitude"],

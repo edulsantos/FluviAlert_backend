@@ -12,6 +12,7 @@ class CityAlert(Base):
 
     id          = Column(CHAR(36), primary_key=True, default=gen_uuid)
     user_id     = Column(CHAR(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    aut_city_id = Column(CHAR(36), ForeignKey("aut_cities.id", ondelete="CASCADE"), nullable=True, index=True)
     city_name   = Column(String(120), nullable=False)
     state_code  = Column(String(2),  nullable=False)
     latitude    = Column(Float, nullable=False)
